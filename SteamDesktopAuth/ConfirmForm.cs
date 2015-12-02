@@ -147,40 +147,34 @@ namespace SteamDesktopAuth
             var selected = confirmListBox.SelectedItem;
             if (selected != null)
             {
-                Task.Run(() =>
+                string tradeId = ((string)selected).Split(',').LastOrDefault();
+                if (!completedTrades.Contains(tradeId))
                 {
-                    string tradeId = ((string)selected).Split(',').LastOrDefault();
-                    if (!completedTrades.Contains(tradeId))
+                    var CC = confirmationList.First(o => o.conf.ConfirmationID == tradeId);
+                    switch (type)
                     {
-                        Invoke(new Action(() =>
-                        {
-                            var CC = confirmationList.First(o => o.conf.ConfirmationID == tradeId);
-                            switch (type)
+                        case 1:
                             {
-                                case 1:
-                                    {
-                                        if (CC.account.AcceptConfirmation(CC.conf))
-                                        {
-                                            confirmListBox.Items.Remove(selected);
-                                            completedTrades.Add(CC.conf.ConfirmationID);
-                                        }
+                                if (CC.account.AcceptConfirmation(CC.conf))
+                                {
+                                    confirmListBox.Items.Remove(selected);
+                                    completedTrades.Add(CC.conf.ConfirmationID);
+                                }
 
-                                        break;
-                                    }
-                                case 2:
-                                    {
-                                        if (CC.account.DenyConfirmation(CC.conf))
-                                        {
-                                            confirmListBox.Items.Remove(selected);
-                                            completedTrades.Add(CC.conf.ConfirmationID);
-                                        }
-
-                                        break;
-                                    }
+                                break;
                             }
-                        }));
+                        case 2:
+                            {
+                                if (CC.account.DenyConfirmation(CC.conf))
+                                {
+                                    confirmListBox.Items.Remove(selected);
+                                    completedTrades.Add(CC.conf.ConfirmationID);
+                                }
+
+                                break;
+                            }
                     }
-                });
+                }
             }
         }
 

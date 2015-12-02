@@ -327,37 +327,34 @@ namespace SteamDesktopAuth
         {
             for (int i = 0; i < popupForms.Count; i++)
             {
-                Task.Run(() =>
+                PopupForm pf = popupForms[i];
+                if (pf.wasAccepted)
                 {
-                    PopupForm pf = popupForms[i];
-                    if (pf.wasAccepted)
+                    /*Get the trade from list of trades that matches trade id and accept offer*/
+                    var trade = confirmationList.First(o => o.conf.ConfirmationID == pf.tradeId);
+                    if (trade.account.AcceptConfirmation(trade.conf))
                     {
-                        /*Get the trade from list of trades that matches trade id and accept offer*/
-                        var trade = confirmationList.First(o => o.conf.ConfirmationID == pf.tradeId);
-                        if (trade.account.AcceptConfirmation(trade.conf))
-                        {
-                            Console.Beep(800, 100);
-                            trade.done = true;
-                        }
+                        Console.Beep(800, 100);
+                        trade.done = true;
                     }
-                    else if (pf.wasCancelled)
+                }
+                else if (pf.wasCancelled)
+                {
+                    /*... decline offer*/
+                    var trade = confirmationList.First(o => o.conf.ConfirmationID == pf.tradeId);
+                    if (trade.account.DenyConfirmation(trade.conf))
                     {
-                        /*... decline offer*/
-                        var trade = confirmationList.First(o => o.conf.ConfirmationID == pf.tradeId);
-                        if (trade.account.DenyConfirmation(trade.conf))
-                        {
-                            Console.Beep(800, 100);
-                            trade.done = true;
-                        }
+                        Console.Beep(800, 100);
+                        trade.done = true;
                     }
+                }
 
-                    /*Check if it just closed*/
-                    /*User will have to approve the trade from main gui*/
-                    if (pf.wasClosed)
-                    {
-                        popupForms.RemoveAt(i);
-                    }
-                });
+                /*Check if it just closed*/
+                /*User will have to approve the trade from main gui*/
+                if (pf.wasClosed)
+                {
+                    popupForms.RemoveAt(i);
+                }
             }
         }
 
@@ -387,7 +384,7 @@ namespace SteamDesktopAuth
             if (accountListBox.SelectedItem == null)
                 e.Cancel = true;
         }
-        
+
 
         /// <summary>
         /// Searches for new trade confirmations
