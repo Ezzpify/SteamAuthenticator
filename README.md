@@ -1,7 +1,5 @@
 # SteamAuthenticator
-For Steam users who wants a better trading experience after the Steam Escrow update
-
-https://support.steampowered.com/kb_article.php?ref=4020-ALZM-5519
+For Steam users who wants a better trading experience after the Steam [Escrow update](https://support.steampowered.com/kb_article.php?ref=4020-ALZM-5519).
 
 # Download and use
 * Head over to release page: https://github.com/Ezzpify/SteamAuthenticator/releases/
