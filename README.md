@@ -8,7 +8,7 @@ https://support.steampowered.com/kb_article.php?ref=4020-ALZM-5519
 * Download latest version
 * Run Steam Authenticator.exe and set up your account
 
---
+# Information
 
 Recently Steam introduced an update to the trading scene which meant that you are required to have a smartphone in order to trade 
 instantly using the Steam Guard application, and if you did not have this then you are fucked, and you'd have to wait 3 days for the trade 
