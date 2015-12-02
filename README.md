@@ -20,16 +20,15 @@ can be used on multiple computers (providing you can move all the files between 
 
 *Keep in mind that this is in BETA stage as of right now, and there are changes to come*
 
-Image of application:
+# Preview
 
 ![Application](http://i.imgur.com/eYwVYWg.png)
 
 
-Video: 
+# Video
 
 [![Video](http://img.youtube.com/vi/6TeS_htvr3Y/0.jpg)](http://www.youtube.com/watch?v=6TeS_htvr3Y)
 
-Project was inspired from when I saw Jessecar96's version, although it was nowhere near complete and missed features that I wanted such as popup.
-Credits for the idea goes to him:
 
-https://github.com/Jessecar96/SteamDesktopAuthenticator/
+# Credit
+Project was inspired from when I saw [Jessecar96](https://github.com/Jessecar96/SteamDesktopAuthenticator/)'s version, although it was nowhere near complete and missed features that I wanted such as popup. Credits for the idea goes to him:
