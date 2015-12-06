@@ -18,7 +18,6 @@ namespace SteamDesktopAuth
         /// <summary>
         /// General variables
         /// </summary>
-        private string cryHash;
         private Point formStartupLocationPoint;
         private UserLogin userLogin;
 

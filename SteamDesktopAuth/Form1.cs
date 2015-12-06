@@ -387,6 +387,32 @@ namespace SteamDesktopAuth
 
 
         /// <summary>
+        /// Loads the confirmations pending for the account
+        /// Will refresh cookies if needed
+        /// </summary>
+        /// <param name="account">account to load confirmations from</param>
+        /// <returns></returns>
+        private Confirmation[] LoadConfirmations(SteamGuardAccount account)
+        {
+            Confirmation[] confirmations = { };
+
+            try
+            {
+                confirmations = account.FetchConfirmations();
+            }
+            catch(SteamGuardAccount.WGTokenInvalidException)
+            {
+                if (account.RefreshSession())
+                {
+                    FileHandler.SaveSGAFile(account);
+                }
+            }
+
+            return confirmations;
+        }
+
+
+        /// <summary>
         /// Searches for new trade confirmations
         /// </summary>
         private void confirmTimer_Tick(object sender, EventArgs e)
@@ -398,7 +424,7 @@ namespace SteamDesktopAuth
                     try
                     {
                         /*Fetch all confirmations pending for current account*/
-                        Confirmation[] conftemp = accountList[i].FetchConfirmations();
+                        Confirmation[] conftemp = LoadConfirmations(accountList[i]);
                         if (conftemp.Length > 0)
                         {
                             foreach (Confirmation conf in conftemp)
