@@ -75,7 +75,7 @@ namespace SteamDesktopAuth
                     if (contentStr.Length > 0)
                     {
                         /*N1 way to determine if it's hashed*/
-                        if (contentStr.EndsWith("=="))
+                        if (contentStr.EndsWith("="))
                         {
                             if (Crypto.crySecret.Length > 0) contentStr = Crypto.DecryptStringAES(contentStr);
                             else continue;
