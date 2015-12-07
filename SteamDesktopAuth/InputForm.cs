@@ -1,11 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace SteamDesktopAuth
@@ -47,6 +40,7 @@ namespace SteamDesktopAuth
             {
                 inputText.PasswordChar = '*';
                 nopwButton.Visible = true;
+                cancelButton.Visible = false;
             }
         }
 
@@ -56,7 +50,7 @@ namespace SteamDesktopAuth
         /// </summary>
         private void okButton_Click(object sender, EventArgs e)
         {
-            Close();
+            if(inputText.Text.Length > 0) Close();
         }
 
 
@@ -69,6 +63,11 @@ namespace SteamDesktopAuth
             Close();
         }
 
+
+        /// <summary>
+        /// Sets no password to true, means user skips password input
+        /// Will only load save files which are not encrypted
+        /// </summary>
         private void nopwButton_Click(object sender, EventArgs e)
         {
             inputNoPassword = true;

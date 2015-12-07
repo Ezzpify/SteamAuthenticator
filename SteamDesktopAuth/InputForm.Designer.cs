@@ -102,9 +102,9 @@
             this.nopwButton.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(34)))), ((int)(((byte)(34)))), ((int)(((byte)(34)))));
             this.nopwButton.Location = new System.Drawing.Point(27, 127);
             this.nopwButton.Name = "nopwButton";
-            this.nopwButton.Size = new System.Drawing.Size(123, 21);
+            this.nopwButton.Size = new System.Drawing.Size(130, 21);
             this.nopwButton.TabIndex = 10;
-            this.nopwButton.Text = "NO PASSWORD";
+            this.nopwButton.Text = "SKIP PASSWORD";
             this.nopwButton.Visible = false;
             this.nopwButton.Click += new System.EventHandler(this.nopwButton_Click);
             // 

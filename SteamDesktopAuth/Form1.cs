@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.Drawing;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Threading;
 using System.Windows.Forms;
 using SteamAuth;
 using System.Runtime.InteropServices;
@@ -78,7 +79,7 @@ namespace SteamDesktopAuth
                 if (password.Length >= 6 && password.Length <= 25)
                 {
                     Crypto.crySecret = password;
-                    Crypto.crySalt = Encoding.ASCII.GetBytes("RandomNumberFour"); //Guaranteed to be random
+                    Crypto.crySalt = Encoding.ASCII.GetBytes("RandomNumberFour"); //Guaranteed to be random - temp
                 }
                 else
                 {
@@ -604,31 +605,31 @@ namespace SteamDesktopAuth
         {
             if(accountCurrent != null)
             {
-                /*Get current Steam Guard code and have user input the code as a sort of extra confirmation...*/
-                string faAuthCode = accountCurrent.GenerateSteamGuardCode();
-                InputForm confirmForm = new InputForm(string.Format("Type in the following code to remove the authenticator for {0}: {1}", accountCurrent.AccountName, faAuthCode));
+                InputForm confirmForm = new InputForm("Enter the username of the account you want to unlink to proceed.");
                 confirmForm.ShowDialog();
 
-                if(!confirmForm.inputCancelled)
+                if (!confirmForm.inputCancelled)
                 {
-                    /*See if input matches*/
-                    string inputStr = confirmForm.inputText.Text.Trim().ToUpper();
-                    if(inputStr == faAuthCode.ToUpper())
+                    if (confirmForm.inputText.Text.ToLower() == accountCurrent.AccountName.ToLower())
                     {
-                        DialogResult dialogResult = MessageBox.Show("This action will unlink the authenticator for the account: {0}\n"
-                            + "If you want to be able to trade without waiting 3 days you will need to link another authenticator to your account and wait 7 days before you can continue trading.\n\n"
-                            + "Are you sure you want to proceed?", "Confirm selection", MessageBoxButtons.YesNo);
+                        DialogResult dialogResult = MessageBox.Show(string.Format("This action will unlink the authenticator for the account: {0}\n"
+                            + "Are you sure you want to proceed?",
+                            accountCurrent.AccountName),
+                            "Confirm selection",
+                            MessageBoxButtons.YesNo);
 
                         if (dialogResult == DialogResult.Yes)
                         {
-                            /*Try to unlink*/
                             if (accountCurrent.DeactivateAuthenticator())
                             {
                                 MessageBox.Show("Authenticator has been unlinked.", "Success");
+                                confirmTimer.Stop();
 
-                                /*Delete files for that account*/
                                 FileHandler.DeleteSGAFile(accountCurrent);
                                 loadAccounts();
+
+                                Thread.Sleep(750);
+                                confirmTimer.Start();
                             }
                             else
                             {
@@ -639,8 +640,7 @@ namespace SteamDesktopAuth
                     }
                     else
                     {
-                        MessageBox.Show("Confirmation failed.", "Error");
-                        return;
+                        MessageBox.Show("Confirmation failed", "Boop beep.");
                     }
                 }
             }

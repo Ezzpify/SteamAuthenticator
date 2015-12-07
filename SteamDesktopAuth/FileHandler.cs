@@ -1,8 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Diagnostics;
 using System.IO;
 using SteamAuth;
@@ -24,7 +21,8 @@ namespace SteamDesktopAuth
             {
                 string fileName = Path.Combine(Application.StartupPath, string.Format("SGAFiles\\{0}.SGA", account.Session.SteamID));
                 string content = JsonConvert.SerializeObject(account, Formatting.Indented);
-                File.WriteAllText(fileName, Crypto.EncryptStringAES(content));
+                if(Crypto.crySecret.Length > 0) content = Crypto.EncryptStringAES(content);
+                File.WriteAllText(fileName, content);
             }
             catch(Exception ex)
             {
@@ -73,11 +71,19 @@ namespace SteamDesktopAuth
             {
                 try
                 {
-                    string contentStr = Crypto.DecryptStringAES(File.ReadAllText(file.FullName));
+                    string contentStr = File.ReadAllText(file.FullName);
                     if (contentStr.Length > 0)
                     {
+                        /*N1 way to determine if it's hashed*/
+                        if (contentStr.EndsWith("=="))
+                        {
+                            if (Crypto.crySecret.Length > 0) contentStr = Crypto.DecryptStringAES(contentStr);
+                            else continue;
+                        }
+
                         SteamGuardAccount account = JsonConvert.DeserializeObject<SteamGuardAccount>(contentStr);
-                        sgaList.Add(account);
+                        if (account != null)
+                            sgaList.Add(account);
                     }
                     else
                     {

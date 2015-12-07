@@ -1,7 +1,6 @@
 ﻿using System;
 using System.IO;
 using System.Security.Cryptography;
-using System.Windows.Forms;
 
 namespace SteamDesktopAuth
 {
@@ -124,6 +123,12 @@ namespace SteamDesktopAuth
             }
         }
 
+
+        /// <summary>
+        /// Reads barr from stream
+        /// </summary>
+        /// <param name="s">Stream</param>
+        /// <returns></returns>
         private static byte[] ReadByteArray(Stream s)
         {
             byte[] rawLength = new byte[sizeof(int)];
