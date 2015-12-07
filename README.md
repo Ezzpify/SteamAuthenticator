@@ -22,6 +22,8 @@ can be used on multiple computers (providing you can move all the files between 
 
 ![Application](http://i.imgur.com/eYwVYWg.png)
 
+![KKone](https://camo.githubusercontent.com/b809369e17e2fe77528813bbd498c18568049d1f/687474703a2f2f692e696d6775722e636f6d2f6b6836485379722e706e67)
+
 
 # Video
 
