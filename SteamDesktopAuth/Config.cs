@@ -12,5 +12,19 @@ namespace SteamDesktopAuth
             public bool displayed { get; set; }
             public bool done { get; set; }
         }
+
+        public class Object
+        {
+            public string sha { get; set; }
+            public string type { get; set; }
+            public string url { get; set; }
+        }
+
+        public class Github
+        {
+            public string @ref { get; set; }
+            public string url { get; set; }
+            public Object @object { get; set; }
+        }
     }
 }

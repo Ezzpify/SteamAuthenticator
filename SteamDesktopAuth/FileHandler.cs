@@ -73,12 +73,22 @@ namespace SteamDesktopAuth
             {
                 try
                 {
-                    SteamGuardAccount account = JsonConvert.DeserializeObject<SteamGuardAccount>(Crypto.DecryptStringAES(File.ReadAllText(file.FullName)));
-                    sgaList.Add(account);
+                    string contentStr = Crypto.DecryptStringAES(File.ReadAllText(file.FullName));
+                    if (contentStr.Length > 0)
+                    {
+                        SteamGuardAccount account = JsonConvert.DeserializeObject<SteamGuardAccount>(contentStr);
+                        sgaList.Add(account);
+                    }
+                    else
+                    {
+                        /*String was returned empty*/
+                        /*This means password (secret) was incorrect for the account*/
+                        MessageBox.Show(string.Format("Could not open save for SteamID64: {0}", Path.GetFileNameWithoutExtension(file.Name)), "Wrong password");
+                    }
                 }
                 catch(Exception ex)
                 {
-                    MessageBox.Show(ex.ToString());
+                    Debug.WriteLine(ex.ToString());
                 }
             }
 

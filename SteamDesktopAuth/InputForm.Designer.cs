@@ -34,6 +34,7 @@
             this.okButton = new System.Windows.Forms.Label();
             this.cancelButton = new System.Windows.Forms.Label();
             this.questionLabel = new System.Windows.Forms.Label();
+            this.nopwButton = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.topBorder)).BeginInit();
             this.SuspendLayout();
             // 
@@ -64,7 +65,7 @@
             this.okButton.Cursor = System.Windows.Forms.Cursors.Hand;
             this.okButton.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.okButton.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(34)))), ((int)(((byte)(34)))), ((int)(((byte)(34)))));
-            this.okButton.Location = new System.Drawing.Point(187, 127);
+            this.okButton.Location = new System.Drawing.Point(176, 127);
             this.okButton.Name = "okButton";
             this.okButton.Size = new System.Drawing.Size(31, 21);
             this.okButton.TabIndex = 7;
@@ -93,12 +94,27 @@
             this.questionLabel.TabIndex = 9;
             this.questionLabel.Text = "Text will magically appear here, also multiple lines. Fuck phreak xD.";
             // 
+            // nopwButton
+            // 
+            this.nopwButton.AutoSize = true;
+            this.nopwButton.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.nopwButton.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.nopwButton.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(34)))), ((int)(((byte)(34)))), ((int)(((byte)(34)))));
+            this.nopwButton.Location = new System.Drawing.Point(27, 127);
+            this.nopwButton.Name = "nopwButton";
+            this.nopwButton.Size = new System.Drawing.Size(123, 21);
+            this.nopwButton.TabIndex = 10;
+            this.nopwButton.Text = "NO PASSWORD";
+            this.nopwButton.Visible = false;
+            this.nopwButton.Click += new System.EventHandler(this.nopwButton_Click);
+            // 
             // InputForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 17F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.White;
             this.ClientSize = new System.Drawing.Size(331, 169);
+            this.Controls.Add(this.nopwButton);
             this.Controls.Add(this.questionLabel);
             this.Controls.Add(this.cancelButton);
             this.Controls.Add(this.okButton);
@@ -125,5 +141,6 @@
         private System.Windows.Forms.Label cancelButton;
         private System.Windows.Forms.Label questionLabel;
         public System.Windows.Forms.TextBox inputText;
+        private System.Windows.Forms.Label nopwButton;
     }
 }

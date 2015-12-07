@@ -19,6 +19,7 @@ namespace SteamDesktopAuth
         /// <summary>
         /// General variables
         /// </summary>
+        private GitHub gitHub;
         private ConfirmForm confirmForm;
         private SteamGuardAccount accountCurrent;
         private List<SteamGuardAccount> accountList;
@@ -54,6 +55,7 @@ namespace SteamDesktopAuth
         /// </summary>
         private void Form1_Load(object sender, EventArgs e)
         {
+            gitHub              = new GitHub();
             accountList         = new List<SteamGuardAccount>();
             popupForms          = new List<PopupForm>();
             confirmationList    = new List<Config.ConfirmationClass>();
@@ -62,15 +64,15 @@ namespace SteamDesktopAuth
             /*We'll ask for a password here*/
             /*The password will be used as the secret for encrypting the data we'll store along with a generated salt*/
             /*It will be asked for every time the application starts and cannot be recovered*/
-            InputForm passwordForm = new InputForm("Submit password. If you are a new user, enter a new password (6-25 chars). It can not be recovered.", true);
+            /*User can also chose not to enter a password with a button, but this is not secure*/
+            InputForm passwordForm = new InputForm("Enter password. If you are a new user, enter a new password (6-25 chars). It can not be recovered.", true);
             passwordForm.ShowDialog();
 
             if (passwordForm.inputCancelled)
             {
-                MessageBox.Show("Need a password in order to proceed. Exiting...");
                 Environment.Exit(1);
             }
-            else
+            else if (!passwordForm.inputNoPassword)
             {
                 string password = passwordForm.inputText.Text;
                 if (password.Length >= 6 && password.Length <= 25)
@@ -80,10 +82,14 @@ namespace SteamDesktopAuth
                 }
                 else
                 {
-                    MessageBox.Show("Password is not between 6-25 chars. Exiting...");
+                    MessageBox.Show("Password is not between 6-25 chars.", "Error");
                     Environment.Exit(1);
                 }
             }
+
+            /*Check if application is up-to-date*/
+            updateChecker.RunWorkerAsync();
+            IsLoading(true);
 
             /*Create folder that we'll store all save files in*/
             Directory.CreateDirectory(Path.Combine(Application.StartupPath, "SGAFiles"));
@@ -94,10 +100,21 @@ namespace SteamDesktopAuth
         /// <summary>
         /// Notifyicon for main foorm
         /// </summary>
-        private void notifyIcon_Click(object sender, EventArgs e)
+        private void notifyIcon_MouseClick(object sender, MouseEventArgs e)
         {
-            ShowInTaskbar = true;
-            WindowState = FormWindowState.Normal;
+            if(e.Button == MouseButtons.Left)
+            {
+                if (WindowState == FormWindowState.Minimized)
+                {
+                    ShowInTaskbar = true;
+                    WindowState = FormWindowState.Normal;
+                }
+                else if (WindowState == FormWindowState.Normal)
+                {
+                    ShowInTaskbar = false;
+                    WindowState = FormWindowState.Minimized;
+                }
+            }
         }
 
 
@@ -136,6 +153,42 @@ namespace SteamDesktopAuth
                 minimizedNotificationShown = true;
                 notifyIcon.ShowBalloonTip(600, "Steam Authenticator", "I'm still running down here!", ToolTipIcon.Info);
             }
+        }
+
+
+
+
+
+        /// <summary>
+        /// Exit button for the notify menu
+        /// </summary>
+        private void menuExit_Click(object sender, EventArgs e)
+        {
+            Environment.Exit(1);
+        }
+
+
+        /// <summary>
+        /// Runs the update check via GitHub.cs
+        /// </summary>
+        private void updateChecker_DoWork(object sender, DoWorkEventArgs e)
+        {
+            if (!gitHub.ApplicationUpToDate())
+            {
+                MessageBox.Show("There's a new version available at GitHub. :)", "Update available");
+                Process.Start("https://github.com/Ezzpify/SteamAuthenticator/releases");
+            }
+        }
+
+
+        /// <summary>
+        /// Update check is done, so stop the loading animation
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void updateChecker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
+        {
+            IsLoading(false);
         }
 
 
@@ -203,12 +256,8 @@ namespace SteamDesktopAuth
         /// </summary>
         private void loginButton_Click(object sender, EventArgs e)
         {
-            IsLoading(true);
-
             LoginForm loginForm = new LoginForm(new Point(Location.X + 10, Location.Y + 80));
             loginForm.ShowDialog();
-
-            IsLoading(false);
             loadAccounts();
         }
 
@@ -230,9 +279,76 @@ namespace SteamDesktopAuth
                 foreach(SteamGuardAccount account in accountList)
                 {
                     accountListBox.Items.Add(account.AccountName);
+                    if (!notifyMenu.Items.ContainsKey(account.AccountName))
+                    {
+                        /*Add account to notifyMenu (contextMenuStrip attatched to notifyIcon) so user can access things quickly*/
+                        ToolStripMenuItem tsm = new ToolStripMenuItem();
+                        tsm.Text = account.AccountName;
+                        tsm.DropDownItems.Add("Copy Steam Guard code", null, new EventHandler(menuGetCode_Click));
+                        tsm.DropDownItems.Add("Accept all trades", null, new EventHandler(menuAcceptTrades_Click));
+                        notifyMenu.Items.Add(tsm);
+                    }
                 }
 
                 accountListBox.SelectedIndex = 0;
+            }
+        }
+
+
+        /// <summary>
+        /// Gets an account from the global list from a sub-menu item from notifyMenu
+        /// </summary>
+        /// <param name="sender">sender from click event</param>
+        /// <returns>Returns SteamGuardAccount if found, else null</returns>
+        private SteamGuardAccount GetAccountFromMenuItem(object sender)
+        {
+            ToolStripMenuItem clickedItem = sender as ToolStripMenuItem;
+            if (clickedItem != null)
+            {
+                string accountClicked = clickedItem.OwnerItem.Text;
+                if (accountClicked != null && accountClicked.Length > 0)
+                {
+                    /*Try get account*/
+                    SteamGuardAccount account = accountList.First(o => o.AccountName.ToLower() == accountClicked.ToLower());
+                    if (account != null)
+                    {
+                        return account;
+                    }
+                }
+            }
+
+            return null;
+        }
+
+
+        /// <summary>
+        /// Gets the auth code from an account by clicking on the submenu item for the account
+        /// </summary>
+        private void menuGetCode_Click(object sender, EventArgs e)
+        {
+            SteamGuardAccount account = GetAccountFromMenuItem(sender);
+            if(account != null)
+            {
+                Clipboard.SetText(account.GenerateSteamGuardCodeForTime(steamTime));
+                Console.Beep(800, 50);
+            }
+        }
+
+
+        /// <summary>
+        /// Accepts all pending trade for the account from clicking on the submenu item for the account
+        /// </summary>
+        private void menuAcceptTrades_Click(object sender, EventArgs e)
+        {
+            SteamGuardAccount account = GetAccountFromMenuItem(sender);
+            if (account != null)
+            {
+                Confirmation[] confirmations = LoadConfirmations(account);
+                foreach(Confirmation confirmation in confirmations)
+                {
+                    account.AcceptConfirmation(confirmation);
+                }
+                Console.Beep(800, 50);
             }
         }
 
@@ -508,7 +624,7 @@ namespace SteamDesktopAuth
                             /*Try to unlink*/
                             if (accountCurrent.DeactivateAuthenticator())
                             {
-                                MessageBox.Show("Authenticator has been successfully unlinked.");
+                                MessageBox.Show("Authenticator has been unlinked.", "Success");
 
                                 /*Delete files for that account*/
                                 FileHandler.DeleteSGAFile(accountCurrent);
@@ -516,14 +632,14 @@ namespace SteamDesktopAuth
                             }
                             else
                             {
-                                MessageBox.Show("Unable to unlink authenticator. Please try again.");
+                                MessageBox.Show("Unable to unlink authenticator. Please try again.", "Error");
                                 return;
                             }
                         }
                     }
                     else
                     {
-                        MessageBox.Show("Confirmation failed.");
+                        MessageBox.Show("Confirmation failed.", "Error");
                         return;
                     }
                 }

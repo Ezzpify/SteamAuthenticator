@@ -150,6 +150,9 @@
   <metadata name="notifyIcon.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>587, 17</value>
   </metadata>
+  <metadata name="notifyMenu.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <value>715, 15</value>
+  </metadata>
   <data name="notifyIcon.Icon" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>
         AAABAAQAEBAAAAAAIABoBAAARgAAACAgAAAAACAAqBAAAK4EAAAwMAAAAAAgAKglAABWFQAAQEAAAAAA
@@ -688,6 +691,19 @@
         AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==
 </value>
   </data>
+  <data name="menuExit.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+    <value>
+        iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8
+        YQUAAADvSURBVDhPxVLbDcIwDIzSBRiBERiBERiBERiBERiBvzb9YQS6Ad0ANqAiRnwWn9M8WmiR+OlJ
+        VpXL3dmxquaHNrbJDLVp6YJ23fVvDM0SYOy+u/6KrKRtVtAZ3/8Cou4+HZDbNTpBiJKuqKC11WQAvo6z
+        lSuvYSOHS5NIxoJRQkpaiejULrShS3ovPJAag6Cgqx8dZt+d+Zq5Rnjz3IwHYHRsGlvGHiKPXfCzbMVh
+        t8kAlb+WeAKm4TO6yj4QgqnEDAzNTvQ4yjM8h0kYzB1wDgsEgiipLqCGISyS4afoBWC8j4CxX5mNCO49
+        YWYo9QaLp1wcPE17pwAAAABJRU5ErkJggg==
+</value>
+  </data>
+  <metadata name="updateChecker.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <value>829, 15</value>
+  </metadata>
   <data name="$this.Icon" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>
         AAABAAQAEBAAAAAAIABoBAAARgAAACAgAAAAACAAqBAAAK4EAAAwMAAAAAAgAKglAABWFQAAQEAAAAAA

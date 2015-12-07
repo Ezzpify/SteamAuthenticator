@@ -120,8 +120,6 @@ namespace SteamDesktopAuth
             }
             catch
             {
-                MessageBox.Show("Could not recover data. Password is incorrect.\nExiting...");
-                Environment.Exit(1);
                 return "";
             }
         }

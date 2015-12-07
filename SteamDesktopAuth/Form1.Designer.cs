@@ -51,6 +51,9 @@
             this.popupFormClear = new System.Windows.Forms.Timer(this.components);
             this.confirmTimer = new System.Windows.Forms.Timer(this.components);
             this.notifyIcon = new System.Windows.Forms.NotifyIcon(this.components);
+            this.notifyMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.menuExit = new System.Windows.Forms.ToolStripMenuItem();
+            this.updateChecker = new System.ComponentModel.BackgroundWorker();
             ((System.ComponentModel.ISupportInitialize)(this.topBorder)).BeginInit();
             this.headerPanel.SuspendLayout();
             this.controlPanel.SuspendLayout();
@@ -58,6 +61,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.loadingPicture)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.accountMenu.SuspendLayout();
+            this.notifyMenu.SuspendLayout();
             this.SuspendLayout();
             // 
             // topBorder
@@ -292,10 +296,32 @@
             // notifyIcon
             // 
             this.notifyIcon.BalloonTipTitle = "Steam Authenticator";
+            this.notifyIcon.ContextMenuStrip = this.notifyMenu;
             this.notifyIcon.Icon = ((System.Drawing.Icon)(resources.GetObject("notifyIcon.Icon")));
             this.notifyIcon.Text = "Steam Authenticator";
             this.notifyIcon.Visible = true;
-            this.notifyIcon.Click += new System.EventHandler(this.notifyIcon_Click);
+            this.notifyIcon.MouseClick += new System.Windows.Forms.MouseEventHandler(this.notifyIcon_MouseClick);
+            // 
+            // notifyMenu
+            // 
+            this.notifyMenu.Font = new System.Drawing.Font("Segoe UI", 10F);
+            this.notifyMenu.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.menuExit});
+            this.notifyMenu.Name = "notifyMenu";
+            this.notifyMenu.Size = new System.Drawing.Size(100, 28);
+            // 
+            // menuExit
+            // 
+            this.menuExit.Image = ((System.Drawing.Image)(resources.GetObject("menuExit.Image")));
+            this.menuExit.Name = "menuExit";
+            this.menuExit.Size = new System.Drawing.Size(99, 24);
+            this.menuExit.Text = "Exit";
+            this.menuExit.Click += new System.EventHandler(this.menuExit_Click);
+            // 
+            // updateChecker
+            // 
+            this.updateChecker.DoWork += new System.ComponentModel.DoWorkEventHandler(this.updateChecker_DoWork);
+            this.updateChecker.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.updateChecker_RunWorkerCompleted);
             // 
             // Form1
             // 
@@ -325,6 +351,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.loadingPicture)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
             this.accountMenu.ResumeLayout(false);
+            this.notifyMenu.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -352,6 +379,9 @@
         private System.Windows.Forms.Timer confirmTimer;
         private System.Windows.Forms.Label confirmationButton;
         private System.Windows.Forms.NotifyIcon notifyIcon;
+        private System.Windows.Forms.ContextMenuStrip notifyMenu;
+        private System.Windows.Forms.ToolStripMenuItem menuExit;
+        private System.ComponentModel.BackgroundWorker updateChecker;
     }
 }
 

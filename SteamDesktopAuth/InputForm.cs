@@ -16,6 +16,7 @@ namespace SteamDesktopAuth
         /// General variables
         /// </summary>
         public bool inputCancelled;
+        public bool inputNoPassword;
 
 
         /// <summary>
@@ -45,6 +46,7 @@ namespace SteamDesktopAuth
             if(password)
             {
                 inputText.PasswordChar = '*';
+                nopwButton.Visible = true;
             }
         }
 
@@ -64,6 +66,12 @@ namespace SteamDesktopAuth
         private void cancelButton_Click(object sender, EventArgs e)
         {
             inputCancelled = true;
+            Close();
+        }
+
+        private void nopwButton_Click(object sender, EventArgs e)
+        {
+            inputNoPassword = true;
             Close();
         }
     }
