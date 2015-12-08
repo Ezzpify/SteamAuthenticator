@@ -1,4 +1,5 @@
 ﻿using SteamAuth;
+using System.Collections.Generic;
 
 namespace SteamDesktopAuth
 {
@@ -25,6 +26,45 @@ namespace SteamDesktopAuth
             public string @ref { get; set; }
             public string url { get; set; }
             public Object @object { get; set; }
+        }
+
+        public class Author
+        {
+            public string name { get; set; }
+            public string email { get; set; }
+            public string date { get; set; }
+        }
+
+        public class Committer
+        {
+            public string name { get; set; }
+            public string email { get; set; }
+            public string date { get; set; }
+        }
+
+        public class Tree
+        {
+            public string sha { get; set; }
+            public string url { get; set; }
+        }
+
+        public class Parent
+        {
+            public string sha { get; set; }
+            public string url { get; set; }
+            public string html_url { get; set; }
+        }
+
+        public class GithubRelease
+        {
+            public string sha { get; set; }
+            public string url { get; set; }
+            public string html_url { get; set; }
+            public Author author { get; set; }
+            public Committer committer { get; set; }
+            public Tree tree { get; set; }
+            public string message { get; set; }
+            public List<Parent> parents { get; set; }
         }
     }
 }

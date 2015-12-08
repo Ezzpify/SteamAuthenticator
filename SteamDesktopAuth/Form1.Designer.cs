@@ -54,6 +54,7 @@
             this.notifyMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.menuExit = new System.Windows.Forms.ToolStripMenuItem();
             this.updateChecker = new System.ComponentModel.BackgroundWorker();
+            this.versionLabel = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.topBorder)).BeginInit();
             this.headerPanel.SuspendLayout();
             this.controlPanel.SuspendLayout();
@@ -146,6 +147,7 @@
             // 
             // contentPanel
             // 
+            this.contentPanel.Controls.Add(this.versionLabel);
             this.contentPanel.Controls.Add(this.confirmationButton);
             this.contentPanel.Controls.Add(this.githubLink);
             this.contentPanel.Controls.Add(this.loadingPicture);
@@ -323,6 +325,19 @@
             this.updateChecker.DoWork += new System.ComponentModel.DoWorkEventHandler(this.updateChecker_DoWork);
             this.updateChecker.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.updateChecker_RunWorkerCompleted);
             // 
+            // versionLabel
+            // 
+            this.versionLabel.AutoSize = true;
+            this.versionLabel.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.versionLabel.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.versionLabel.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(224)))), ((int)(((byte)(224)))), ((int)(((byte)(224)))));
+            this.versionLabel.Location = new System.Drawing.Point(12, 296);
+            this.versionLabel.Name = "versionLabel";
+            this.versionLabel.Size = new System.Drawing.Size(44, 13);
+            this.versionLabel.TabIndex = 12;
+            this.versionLabel.Text = "version";
+            this.versionLabel.Click += new System.EventHandler(this.versionLabel_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 17F);
@@ -382,6 +397,7 @@
         private System.Windows.Forms.ContextMenuStrip notifyMenu;
         private System.Windows.Forms.ToolStripMenuItem menuExit;
         private System.ComponentModel.BackgroundWorker updateChecker;
+        private System.Windows.Forms.Label versionLabel;
     }
 }
 

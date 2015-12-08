@@ -31,6 +31,7 @@ namespace SteamDesktopAuth
         private long currentSteamChunk;
 
         private bool minimizedNotificationShown;
+        private bool applicationUpdateAvailable;
 
 
         /// <summary>
@@ -61,6 +62,8 @@ namespace SteamDesktopAuth
             popupForms          = new List<PopupForm>();
             confirmationList    = new List<Config.ConfirmationClass>();
             confirmForm         = new ConfirmForm();
+
+            versionLabel.Text   = "v" + Application.ProductVersion;
 
             /*We'll ask for a password here*/
             /*The password will be used as the secret for encrypting the data we'll store along with a generated salt*/
@@ -156,10 +159,7 @@ namespace SteamDesktopAuth
             }
         }
 
-
-
-
-
+        
         /// <summary>
         /// Exit button for the notify menu
         /// </summary>
@@ -174,11 +174,7 @@ namespace SteamDesktopAuth
         /// </summary>
         private void updateChecker_DoWork(object sender, DoWorkEventArgs e)
         {
-            if (!gitHub.ApplicationUpToDate())
-            {
-                MessageBox.Show("There's a new version available at GitHub. :)", "Update available");
-                Process.Start("https://github.com/Ezzpify/SteamAuthenticator/releases");
-            }
+            applicationUpdateAvailable = !gitHub.ApplicationUpToDate();
         }
 
 
@@ -189,6 +185,28 @@ namespace SteamDesktopAuth
         /// <param name="e"></param>
         private void updateChecker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
+            if (applicationUpdateAvailable)
+            {
+                versionLabel.Text = versionLabel.Text + " - Update available";
+
+                /*Show messagebox containing info of update*/
+                DialogResult diagResult =
+                MessageBox.Show(string.Format(
+                      "An update is available on GitHub!\nWant to download it now?\n\n"
+                    + "Note:\n{0}\n\n---\n{1}\n{2}\n{3}", 
+                      gitHub.update.message, 
+                      gitHub.update.committer.name, 
+                      gitHub.update.committer.email, 
+                      gitHub.update.committer.date), 
+                      "Hey, listen",
+                      MessageBoxButtons.YesNo);
+
+                /*Go to latest release if pressed yes*/
+                if(diagResult == DialogResult.Yes)
+                {
+                    Process.Start("https://github.com/Ezzpify/SteamAuthenticator/releases/latest");
+                }
+            }
             IsLoading(false);
         }
 
@@ -605,6 +623,7 @@ namespace SteamDesktopAuth
         {
             if(accountCurrent != null)
             {
+                /*We want to confirm the user is unlinking the right account, and not the wrong one by accident*/
                 InputForm confirmForm = new InputForm("Enter the username of the account you want to unlink to proceed.");
                 confirmForm.ShowDialog();
 
@@ -624,11 +643,10 @@ namespace SteamDesktopAuth
                             {
                                 MessageBox.Show("Authenticator has been unlinked.", "Success");
                                 confirmTimer.Stop();
+                                Thread.Sleep(1000);
 
                                 FileHandler.DeleteSGAFile(accountCurrent);
                                 loadAccounts();
-
-                                Thread.Sleep(750);
                                 confirmTimer.Start();
                             }
                             else
@@ -644,6 +662,15 @@ namespace SteamDesktopAuth
                     }
                 }
             }
+        }
+
+
+        /// <summary>
+        /// Version label takes user to github release page
+        /// </summary>
+        private void versionLabel_Click(object sender, EventArgs e)
+        {
+            Process.Start("https://github.com/Ezzpify/SteamAuthenticator/releases/latest");
         }
     }
 }

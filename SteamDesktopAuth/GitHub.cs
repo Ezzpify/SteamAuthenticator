@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Web;
+using System.Text.RegularExpressions;
 using System.Net;
 using System.Windows.Forms;
 using Newtonsoft.Json;
@@ -13,6 +14,12 @@ namespace SteamDesktopAuth
     public class GitHub
     {
         /// <summary>
+        /// Stores the new update available if there is one available
+        /// </summary>
+        public Config.GithubRelease update;
+
+
+        /// <summary>
         /// Checks if the application is up-to-date
         /// </summary>
         /// <returns>Returns true if up to date, false if not</returns>
@@ -21,16 +28,23 @@ namespace SteamDesktopAuth
             /*Download release tags from github api*/
             /*If API changes this will break, so for future visitors - this might be your problem*/
             string refJson = DownloadString("https://api.github.com/repos/Ezzpify/SteamAuthenticator/git/refs/tags");
+            Config.Github gitHub = null;
             if (refJson.Length > 0)
             {
                 try
                 {
-                    /*Parse github response*/
-                    Config.Github gitHub = JsonConvert.DeserializeObject<Config.Github[]>(refJson).Last();
+                    /*Parse github response - get last release in json array*/
+                    gitHub = JsonConvert.DeserializeObject<Config.Github[]>(refJson).Last();
 
                     /*Get versions*/
                     string gitLatestVersion = gitHub.@ref.Substring(gitHub.@ref.LastIndexOf('/') + 1);
                     string appCurrentVersion = Application.ProductVersion;
+
+                    /*Check if version string from github is in the wrong format (not ie 1.5.5)*/
+                    /*If it's not then something is broken or changed at github, but instead of bugging user we'll return true*/
+                    if (!new Regex(@"^[0-9.]+$").IsMatch(gitLatestVersion)) return true;
+
+                    /*If version are the same*/
                     if (gitLatestVersion == appCurrentVersion) return true;
                 }
                 catch
@@ -41,6 +55,9 @@ namespace SteamDesktopAuth
                 }
             }
 
+            /*There's an update available, set update variable class and return false*/
+            string commitJson = DownloadString(gitHub.@object.url);
+            update = JsonConvert.DeserializeObject<Config.GithubRelease>(commitJson);
             return false;
         }
 

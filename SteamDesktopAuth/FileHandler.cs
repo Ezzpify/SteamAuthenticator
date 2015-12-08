@@ -19,9 +19,20 @@ namespace SteamDesktopAuth
         {
             try
             {
+                bool encrypt = true;
                 string fileName = Path.Combine(Application.StartupPath, string.Format("SGAFiles\\{0}.SGA", account.Session.SteamID));
                 string content = JsonConvert.SerializeObject(account, Formatting.Indented);
-                if(Crypto.crySecret.Length > 0) content = Crypto.EncryptStringAES(content);
+
+                /*File already exists, so we need to make sure we don't encrypt it if it's not meant to be encrypted*/
+                if (File.Exists(fileName))
+                {
+                    if(!File.ReadAllText(fileName).EndsWith("="))
+                    {
+                        encrypt = false;
+                    }
+                }
+
+                if (Crypto.crySecret.Length > 0 && encrypt) content = Crypto.EncryptStringAES(content);
                 File.WriteAllText(fileName, content);
             }
             catch(Exception ex)

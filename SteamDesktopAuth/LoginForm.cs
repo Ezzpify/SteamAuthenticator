@@ -215,10 +215,6 @@ namespace SteamDesktopAuth
                     return;
                 }
 
-                MessageBox.Show(string.Format("Before finishing, write down your revocation code incase you wish to remove Steam Authenticator from your account:\n"
-                    + "{0}\n\n"
-                    + "I'm going to ask for it later again.", authLinker.LinkedAccount.RevocationCode), "Almost there...");
-
                 /*Final checks*/
                 AuthenticatorLinker.FinalizeResult finalRes = AuthenticatorLinker.FinalizeResult.GeneralFailure;
                 while(finalRes != AuthenticatorLinker.FinalizeResult.Success)
@@ -228,26 +224,6 @@ namespace SteamDesktopAuth
                     smsForm.ShowDialog();
                     if(smsForm.inputCancelled)
                     {
-                        /*Delete file here*/
-                        FileHandler.DeleteSGAFile(authLinker.LinkedAccount);
-                        Close();
-                        return;
-                    }
-
-                    /*Reminder to make sure the user wrote down the revocation code*/
-                    InputForm confirmRecocationForm = new InputForm("Enter your revocation code that you wrote down.");
-                    confirmRecocationForm.ShowDialog();
-                    if(confirmRecocationForm.inputCancelled)
-                    {
-                        Close();
-                        return;
-                    }
-
-                    /*Check if the revocation code that was entered by user matches with the correct code*/
-                    if(confirmRecocationForm.inputText.Text.ToUpper() != authLinker.LinkedAccount.RevocationCode.ToUpper())
-                    {
-                        MessageBox.Show("Incorrect revocation code - the authentication was not linked.\nYou need to remember the code.", "Error");
-
                         /*Delete file here*/
                         FileHandler.DeleteSGAFile(authLinker.LinkedAccount);
                         Close();
@@ -265,19 +241,8 @@ namespace SteamDesktopAuth
                     }
 
                     /*General failure number one*/
-                    if(finalRes == AuthenticatorLinker.FinalizeResult.UnableToGenerateCorrectCodes)
-                    {
-                        MessageBox.Show(string.Format("Unable to generate correct codes.\nThe authenticator has not been linked.\n\n"
-                            + "However, please write the revocation code down just incase:\n\n  {0}", authLinker.LinkedAccount.RevocationCode), "Error");
-
-                        /*Delete file here*/
-                        FileHandler.DeleteSGAFile(authLinker.LinkedAccount);
-                        Close();
-                        return;
-                    }
-
-                    /*General failure number two*/
-                    if(finalRes == AuthenticatorLinker.FinalizeResult.GeneralFailure)
+                    if(finalRes == AuthenticatorLinker.FinalizeResult.UnableToGenerateCorrectCodes
+                        || finalRes == AuthenticatorLinker.FinalizeResult.GeneralFailure)
                     {
                         MessageBox.Show(string.Format("Unable to generate correct codes.\nThe authenticator has not been linked.\n\n"
                             + "However, please write the revocation code down just incase:\n\n  {0}", authLinker.LinkedAccount.RevocationCode), "Error");
@@ -296,7 +261,7 @@ namespace SteamDesktopAuth
                     //Do something about it
                 }
 
-                MessageBox.Show("Mobile authenticator successfully linked.", "Success!");
+                MessageBox.Show("Mobile authenticator successfully linked.\nRevocation code: " + authLinker.LinkedAccount.RevocationCode, "Success!");
                 Close();
             }
             else

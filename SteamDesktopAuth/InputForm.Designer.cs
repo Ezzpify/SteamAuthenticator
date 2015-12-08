@@ -58,6 +58,7 @@
             this.inputText.Size = new System.Drawing.Size(271, 25);
             this.inputText.TabIndex = 3;
             this.inputText.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            this.inputText.KeyDown += new System.Windows.Forms.KeyEventHandler(this.inputText_KeyDown);
             // 
             // okButton
             // 

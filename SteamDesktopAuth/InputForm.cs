@@ -70,8 +70,33 @@ namespace SteamDesktopAuth
         /// </summary>
         private void nopwButton_Click(object sender, EventArgs e)
         {
-            inputNoPassword = true;
-            Close();
+            if (nopwButton.Visible)
+            {
+                inputNoPassword = true;
+                Close();
+            }
+            else
+            {
+                inputCancelled = true;
+                Close();
+            }
+        }
+
+
+        /// <summary>
+        /// Allow for user to press enter/esc key to continue/skip
+        /// </summary>
+        private void inputText_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Enter)
+            {
+                if (inputText.Text.Length > 0) Close();
+            }
+            else if (e.KeyCode == Keys.Escape)
+            {
+                inputNoPassword = true;
+                Close();
+            }
         }
     }
 }
