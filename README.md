@@ -1,22 +1,19 @@
-# SteamAuthenticator
-For Steam users who wants a better trading experience after the Steam [Escrow update](https://support.steampowered.com/kb_article.php?ref=4020-ALZM-5519).
-
-# Download and use
-* Head over to release page: https://github.com/Ezzpify/SteamAuthenticator/releases/
-* Download latest version
-* Run Steam Authenticator.exe and set up your account
+<p align="center">
+  <img src="http://i.imgur.com/ebiDtz6.png"/>
+  <h1 align="center">Steam Authenticator</h1>
+  <p align="center">For Steam users who wants a better trading experience after the Steam Escrow update.</p>
+  <h2 align="center"><a href="https://github.com/Ezzpify/SteamAuthenticator/releases/latest">DOWNLOAD</a></h2>
+</p>
 
 # Information
 
+Recently Steam introduced an update to the trading scene which meant that you are required to have a smartphone in order to be able to trade items instantly using the Steam application, and if you do not have a smartphone connected then you will need to wait three days for the items to reach the one you're tradign with.
+
+This application will act as your own mobile authenticator, providing you with the login (2FA) codes for each account and the ability to quiickly confirm trades and market transactions right on your desktop. All your accounts can be protected by a password if you see fit, and it can be easily ported around to multiple computers via USP or a cloud service such as Dropbox or Google Drive.
+
 Recently Steam introduced an update to the trading scene which meant that you are required to have a smartphone in order to trade 
-instantly using the Steam Guard application, and if you did not have this then you are fucked, and you'd have to wait 3 days for the trade 
+instantly using the Steam Guard application, and if you do not have this then you'd have to wait 3 days for the trade 
 to go through.
-
-This application will act as a mobile authenticator, providing you with the Login (2FA) codes for each account and the ability 
-to quickly confirm trades right on your desktop. Account information is protected by an individual password and the application 
-can be used on multiple computers (providing you can move all the files between computers using a flash drive or something more neat, like Dropbox).
-
-*Keep in mind that this is in BETA stage as of right now, and there are changes to come*
 
 # Preview
 
