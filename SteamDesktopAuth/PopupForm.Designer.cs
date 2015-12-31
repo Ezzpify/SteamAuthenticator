@@ -162,7 +162,7 @@
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "PopupForm";
-            this.Text = "PopupForm";
+            this.Text = "SA Popup";
             this.TopMost = true;
             this.Load += new System.EventHandler(this.PopupForm_Load);
             this.MouseEnter += new System.EventHandler(this.PopupForm_MouseEnter);

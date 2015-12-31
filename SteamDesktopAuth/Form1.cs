@@ -12,6 +12,7 @@ using System.IO;
 using System.Diagnostics;
 using System.Media;
 using System.Text;
+using System.Net;
 
 namespace SteamDesktopAuth
 {
@@ -22,6 +23,7 @@ namespace SteamDesktopAuth
         /// </summary>
         private GitHub gitHub;
         private ConfirmForm confirmForm;
+        private SettingsForm settingsForm;
         private SteamGuardAccount accountCurrent;
         private List<SteamGuardAccount> accountList;
         private List<Config.ConfirmationClass> confirmationList;
@@ -62,38 +64,64 @@ namespace SteamDesktopAuth
             popupForms          = new List<PopupForm>();
             confirmationList    = new List<Config.ConfirmationClass>();
             confirmForm         = new ConfirmForm();
-
             versionLabel.Text   = "v" + Application.ProductVersion;
+            
+            /*Check for settings*/
+            settingsForm = new SettingsForm();
+            settingsForm.cbAutostart.Checked    = CRegistry.StartUp.IsRegistered();
+            settingsForm.cbUpdates.Checked      = Properties.Settings.Default.bCheckForUpdates;
+            settingsForm.cbPassword.Checked     = Properties.Settings.Default.bAskForPassword;
+            settingsForm.cbStatistics.Checked   = Properties.Settings.Default.bSendStatistics;
+
+            /*Update statistics if enabled*/
+            if (settingsForm.cbStatistics.Checked)
+            {
+                Task.Run(() =>
+                {
+                    using (WebClient wc = new WebClient())
+                    {
+                        wc.Headers[HttpRequestHeader.ContentType] = "application/x-www-form-urlencoded";
+                        wc.Headers.Add("user-agent", "Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.2; .NET CLR 1.0.3705;)");
+                        wc.DownloadString("http://casperbod.in/patch/");
+                    }
+                });
+            }
 
             /*We'll ask for a password here*/
             /*The password will be used as the secret for encrypting the data we'll store along with a generated salt*/
             /*It will be asked for every time the application starts and cannot be recovered*/
             /*User can also chose not to enter a password with a button, but this is not secure*/
-            InputForm passwordForm = new InputForm("Enter password. If you are a new user, enter a new password (6-25 chars). It can not be recovered.", true);
-            passwordForm.ShowDialog();
+            if (settingsForm.cbPassword.Checked)
+            {
+                InputForm passwordForm = new InputForm("Enter password. If you are a new user, enter a new password (6-25 chars). It can not be recovered.", true);
+                passwordForm.ShowDialog();
 
-            if (passwordForm.inputCancelled)
-            {
-                Environment.Exit(1);
-            }
-            else if (!passwordForm.inputNoPassword)
-            {
-                string password = passwordForm.inputText.Text;
-                if (password.Length >= 6 && password.Length <= 25)
+                if (passwordForm.inputCancelled)
                 {
-                    Crypto.crySecret = password;
-                    Crypto.crySalt = Encoding.ASCII.GetBytes("RandomNumberFour"); //Guaranteed to be random - temp
-                }
-                else
-                {
-                    MessageBox.Show("Password is not between 6-25 chars.", "Error");
                     Environment.Exit(1);
                 }
+                else if (!passwordForm.inputNoPassword)
+                {
+                    string password = passwordForm.inputText.Text;
+                    if (password.Length >= 6 && password.Length <= 25)
+                    {
+                        Crypto.crySecret = password;
+                        Crypto.crySalt = Encoding.ASCII.GetBytes("RandomNumberFour"); //Guaranteed to be random - temp
+                    }
+                    else
+                    {
+                        MessageBox.Show("Password is not between 6-25 chars.", "Error");
+                        Environment.Exit(1);
+                    }
+                }
             }
 
-            /*Check if application is up-to-date*/
-            updateChecker.RunWorkerAsync();
-            IsLoading(true);
+            if (settingsForm.cbUpdates.Checked)
+            {
+                /*Check if application is up-to-date*/
+                updateChecker.RunWorkerAsync();
+                IsLoading(true);
+            }
 
             /*Create folder that we'll store all save files in*/
             Directory.CreateDirectory(Path.Combine(Application.StartupPath, "SGAFiles"));
@@ -130,6 +158,16 @@ namespace SteamDesktopAuth
         private void accountListBox_MouseDown(object sender, MouseEventArgs e)
         {
             accountListBox.SelectedIndex = accountListBox.IndexFromPoint(e.X, e.Y);
+        }
+
+
+        /// <summary>
+        /// Shows the settings form
+        /// </summary>
+        private void settingsBtn_Click(object sender, EventArgs e)
+        {
+            if (settingsForm != null)
+                settingsForm.ShowDialog();
         }
 
 
@@ -193,7 +231,7 @@ namespace SteamDesktopAuth
                 DialogResult diagResult =
                 MessageBox.Show(string.Format(
                       "An update is available on GitHub!\nWant to download it now?\n\n"
-                    + "Note:\n{0}\n\n---\n{1}\n{2}\n{3}", 
+                    + "Note:\n{0}\n\n---\n{1}\n{2}\n{3}",
                       gitHub.update.message, 
                       gitHub.update.committer.name, 
                       gitHub.update.committer.email, 
@@ -362,8 +400,7 @@ namespace SteamDesktopAuth
             SteamGuardAccount account = GetAccountFromMenuItem(sender);
             if (account != null)
             {
-                Confirmation[] confirmations = LoadConfirmations(account);
-                foreach(Confirmation confirmation in confirmations)
+                foreach(Confirmation confirmation in LoadConfirmations(account))
                 {
                     account.AcceptConfirmation(confirmation);
                 }
@@ -588,26 +625,29 @@ namespace SteamDesktopAuth
                 }
 
                 /*Go through all confirmations pending and see if we should make a popup about the trade*/
-                foreach(Config.ConfirmationClass CC in confirmationList)
+                lock (confirmationList)
                 {
-                    /*Have to make an additional check here because user might accept from ConfirmForm*/
-                    if (confirmForm.completedTrades.Contains(CC.conf.ConfirmationID))
-                        CC.done = true;
-
-                    if(!CC.displayed)
+                    foreach (Config.ConfirmationClass CC in confirmationList)
                     {
-                        CC.displayed = true;
-                        Invoke(new Action(() =>
+                        /*Have to make an additional check here because user might accept from ConfirmForm*/
+                        if (confirmForm.completedTrades.Contains(CC.conf.ConfirmationID))
+                            CC.done = true;
+
+                        if (!CC.displayed)
                         {
-                            /*Invoke because yolo*/
-                            DoPopup(CC);
+                            CC.displayed = true;
+                            Invoke(new Action(() =>
+                            {
+                                /*Invoke because yolo*/
+                                DoPopup(CC);
 
-                            /*Play notification sound from resources*/
-                            SoundPlayer notifyPlayer = new SoundPlayer();
-                            notifyPlayer.Stream = Properties.Resources.notifysound;
-                            notifyPlayer.Play();
+                                /*Play notification sound from resources*/
+                                SoundPlayer notifyPlayer = new SoundPlayer();
+                                notifyPlayer.Stream = Properties.Resources.notifysound;
+                                notifyPlayer.Play();
 
-                        }));
+                            }));
+                        }
                     }
                 }
             });

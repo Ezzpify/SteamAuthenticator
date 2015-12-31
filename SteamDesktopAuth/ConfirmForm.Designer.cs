@@ -164,7 +164,7 @@
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "ConfirmForm";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "ConfirmForm";
+            this.Text = "SA Confirm";
             this.MouseDown += new System.Windows.Forms.MouseEventHandler(this.ConfirmForm_MouseDown);
             ((System.ComponentModel.ISupportInitialize)(this.topBorder)).EndInit();
             this.panel1.ResumeLayout(false);

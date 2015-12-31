@@ -30,6 +30,7 @@ namespace SteamDesktopAuth
             InitializeComponent();
 
             tradeId = tradeid;
+            Text = head;
             headerText.Text = head;
             bodyText.Text = string.Format("From account {0} | {1}", account, tradeid);
             formStartupLocationPoint = location;

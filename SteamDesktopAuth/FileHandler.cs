@@ -93,6 +93,7 @@ namespace SteamDesktopAuth
                         }
 
                         SteamGuardAccount account = JsonConvert.DeserializeObject<SteamGuardAccount>(contentStr);
+
                         if (account != null)
                             sgaList.Add(account);
                     }
@@ -105,7 +106,7 @@ namespace SteamDesktopAuth
                 }
                 catch(Exception ex)
                 {
-                    Debug.WriteLine(ex.ToString());
+                    MessageBox.Show(ex.ToString());
                 }
             }
 

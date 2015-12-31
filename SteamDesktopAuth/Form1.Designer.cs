@@ -34,9 +34,11 @@
             this.headerPanel = new System.Windows.Forms.Panel();
             this.label1 = new System.Windows.Forms.Label();
             this.controlPanel = new System.Windows.Forms.Panel();
+            this.settingsBtn = new System.Windows.Forms.Button();
             this.miniButton = new System.Windows.Forms.Button();
             this.exitButton = new System.Windows.Forms.Button();
             this.contentPanel = new System.Windows.Forms.Panel();
+            this.versionLabel = new System.Windows.Forms.Label();
             this.confirmationButton = new System.Windows.Forms.Label();
             this.githubLink = new System.Windows.Forms.Label();
             this.loadingPicture = new System.Windows.Forms.PictureBox();
@@ -54,7 +56,6 @@
             this.notifyMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.menuExit = new System.Windows.Forms.ToolStripMenuItem();
             this.updateChecker = new System.ComponentModel.BackgroundWorker();
-            this.versionLabel = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.topBorder)).BeginInit();
             this.headerPanel.SuspendLayout();
             this.controlPanel.SuspendLayout();
@@ -101,6 +102,7 @@
             // 
             // controlPanel
             // 
+            this.controlPanel.Controls.Add(this.settingsBtn);
             this.controlPanel.Controls.Add(this.miniButton);
             this.controlPanel.Controls.Add(this.exitButton);
             this.controlPanel.Dock = System.Windows.Forms.DockStyle.Top;
@@ -111,6 +113,24 @@
             this.controlPanel.TabIndex = 2;
             this.controlPanel.MouseDown += new System.Windows.Forms.MouseEventHandler(this.controlPanel_MouseDown);
             // 
+            // settingsBtn
+            // 
+            this.settingsBtn.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.settingsBtn.Dock = System.Windows.Forms.DockStyle.Left;
+            this.settingsBtn.FlatAppearance.BorderSize = 0;
+            this.settingsBtn.FlatAppearance.MouseDownBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(250)))), ((int)(((byte)(250)))), ((int)(((byte)(250)))));
+            this.settingsBtn.FlatAppearance.MouseOverBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(250)))), ((int)(((byte)(250)))), ((int)(((byte)(250)))));
+            this.settingsBtn.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.settingsBtn.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.settingsBtn.ForeColor = System.Drawing.Color.Gray;
+            this.settingsBtn.Location = new System.Drawing.Point(0, 0);
+            this.settingsBtn.Name = "settingsBtn";
+            this.settingsBtn.Size = new System.Drawing.Size(65, 25);
+            this.settingsBtn.TabIndex = 2;
+            this.settingsBtn.Text = "settings";
+            this.settingsBtn.UseVisualStyleBackColor = true;
+            this.settingsBtn.Click += new System.EventHandler(this.settingsBtn_Click);
+            // 
             // miniButton
             // 
             this.miniButton.Cursor = System.Windows.Forms.Cursors.Hand;
@@ -119,7 +139,7 @@
             this.miniButton.FlatAppearance.MouseDownBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(250)))), ((int)(((byte)(250)))), ((int)(((byte)(250)))));
             this.miniButton.FlatAppearance.MouseOverBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(250)))), ((int)(((byte)(250)))), ((int)(((byte)(250)))));
             this.miniButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.miniButton.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(34)))), ((int)(((byte)(34)))), ((int)(((byte)(34)))));
+            this.miniButton.ForeColor = System.Drawing.Color.Gray;
             this.miniButton.Location = new System.Drawing.Point(250, 0);
             this.miniButton.Name = "miniButton";
             this.miniButton.Size = new System.Drawing.Size(25, 25);
@@ -136,7 +156,7 @@
             this.exitButton.FlatAppearance.MouseDownBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(250)))), ((int)(((byte)(250)))), ((int)(((byte)(250)))));
             this.exitButton.FlatAppearance.MouseOverBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(250)))), ((int)(((byte)(250)))), ((int)(((byte)(250)))));
             this.exitButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.exitButton.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(34)))), ((int)(((byte)(34)))), ((int)(((byte)(34)))));
+            this.exitButton.ForeColor = System.Drawing.Color.Gray;
             this.exitButton.Location = new System.Drawing.Point(275, 0);
             this.exitButton.Name = "exitButton";
             this.exitButton.Size = new System.Drawing.Size(25, 25);
@@ -163,6 +183,19 @@
             this.contentPanel.Size = new System.Drawing.Size(300, 318);
             this.contentPanel.TabIndex = 2;
             this.contentPanel.MouseDown += new System.Windows.Forms.MouseEventHandler(this.contentPanel_MouseDown);
+            // 
+            // versionLabel
+            // 
+            this.versionLabel.AutoSize = true;
+            this.versionLabel.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.versionLabel.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.versionLabel.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(224)))), ((int)(((byte)(224)))), ((int)(((byte)(224)))));
+            this.versionLabel.Location = new System.Drawing.Point(12, 296);
+            this.versionLabel.Name = "versionLabel";
+            this.versionLabel.Size = new System.Drawing.Size(44, 13);
+            this.versionLabel.TabIndex = 12;
+            this.versionLabel.Text = "version";
+            this.versionLabel.Click += new System.EventHandler(this.versionLabel_Click);
             // 
             // confirmationButton
             // 
@@ -325,19 +358,6 @@
             this.updateChecker.DoWork += new System.ComponentModel.DoWorkEventHandler(this.updateChecker_DoWork);
             this.updateChecker.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.updateChecker_RunWorkerCompleted);
             // 
-            // versionLabel
-            // 
-            this.versionLabel.AutoSize = true;
-            this.versionLabel.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.versionLabel.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.versionLabel.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(224)))), ((int)(((byte)(224)))), ((int)(((byte)(224)))));
-            this.versionLabel.Location = new System.Drawing.Point(12, 296);
-            this.versionLabel.Name = "versionLabel";
-            this.versionLabel.Size = new System.Drawing.Size(44, 13);
-            this.versionLabel.TabIndex = 12;
-            this.versionLabel.Text = "version";
-            this.versionLabel.Click += new System.EventHandler(this.versionLabel_Click);
-            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 17F);
@@ -355,7 +375,7 @@
             this.MaximizeBox = false;
             this.Name = "Form1";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "Form1";
+            this.Text = "Steam Authenticator";
             this.Load += new System.EventHandler(this.Form1_Load);
             ((System.ComponentModel.ISupportInitialize)(this.topBorder)).EndInit();
             this.headerPanel.ResumeLayout(false);
@@ -398,6 +418,7 @@
         private System.Windows.Forms.ToolStripMenuItem menuExit;
         private System.ComponentModel.BackgroundWorker updateChecker;
         private System.Windows.Forms.Label versionLabel;
+        private System.Windows.Forms.Button settingsBtn;
     }
 }
 

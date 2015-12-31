@@ -127,7 +127,7 @@
             this.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.Name = "InputForm";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "InputForm";
+            this.Text = "SA Input";
             this.TopMost = true;
             ((System.ComponentModel.ISupportInitialize)(this.topBorder)).EndInit();
             this.ResumeLayout(false);

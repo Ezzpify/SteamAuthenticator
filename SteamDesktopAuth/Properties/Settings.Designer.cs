@@ -22,5 +22,41 @@ namespace SteamDesktopAuth.Properties {
                 return defaultInstance;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool bAskForPassword {
+            get {
+                return ((bool)(this["bAskForPassword"]));
+            }
+            set {
+                this["bAskForPassword"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool bCheckForUpdates {
+            get {
+                return ((bool)(this["bCheckForUpdates"]));
+            }
+            set {
+                this["bCheckForUpdates"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool bSendStatistics {
+            get {
+                return ((bool)(this["bSendStatistics"]));
+            }
+            set {
+                this["bSendStatistics"] = value;
+            }
+        }
     }
 }
