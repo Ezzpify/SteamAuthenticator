@@ -55,6 +55,7 @@ namespace SteamDesktopAuth
             Properties.Settings.Default.bSendStatistics = cbStatistics.Checked;
             Properties.Settings.Default.bCheckForUpdates = cbUpdates.Checked;
             Properties.Settings.Default.bAskForPassword = cbPassword.Checked;
+            Properties.Settings.Default.bStartMinimized = cbStartMinimized.Checked;
             Properties.Settings.Default.Save();
             Close();
         }
@@ -69,7 +70,26 @@ namespace SteamDesktopAuth
                 + "This is simply to keep track of how many users this app has.\n"
                 + "It does NOT send any information at all about your pc or your account.\n\n"
                 + "It simply tells the website: 'Someone started the app'\n"
-                + "For more information, check out the source code. :)", "Information", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                + "For more information, check out the source code at:\nhttps://github.com/Ezzpify/SteamAuthenticator", 
+                "Information", MessageBoxButtons.OK, MessageBoxIcon.Information);
+        }
+
+
+        /// <summary>
+        /// Minimize at start checkbox
+        /// Displays information how it will work is Ask for password is enabled
+        /// </summary>
+        private void cbStartMinimized_CheckedChanged(object sender, EventArgs e)
+        {
+            if (cbPassword.Checked)
+            {
+                MessageBox.Show("If 'Ask for password' is enabled, the password window will still be shown at start.", "Information");
+            }
+
+            if (cbStartMinimized.Checked)
+            {
+                cbAutostart.Checked = true;
+            }
         }
     }
 }

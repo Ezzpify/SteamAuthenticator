@@ -90,7 +90,7 @@ namespace SteamDesktopAuth
                 {
                     if (!trade.done)
                     {
-                        confirmListBox.Items.Add(string.Format("{0},{1}", trade.conf.ConfirmationDescription, trade.conf.ConfirmationID));
+                        confirmListBox.Items.Add(string.Format("{0},{1}", trade.conf.Description, trade.conf.ID));
                     }
                 }
             }
@@ -109,7 +109,7 @@ namespace SteamDesktopAuth
             {
                 if (!trade.done)
                 {
-                    confirmListBox.Items.Add(string.Format("{0},{1}", trade.conf.ConfirmationDescription, trade.conf.ConfirmationID));
+                    confirmListBox.Items.Add(string.Format("{0},{1}", trade.conf.Description, trade.conf.ID));
                 }
             }
         }
@@ -150,7 +150,7 @@ namespace SteamDesktopAuth
                 string tradeId = ((string)selected).Split(',').LastOrDefault();
                 if (!completedTrades.Contains(tradeId))
                 {
-                    var CC = confirmationList.First(o => o.conf.ConfirmationID == tradeId);
+                    var CC = confirmationList.First(o => o.conf.ID == tradeId);
                     switch (type)
                     {
                         case 1:
@@ -158,7 +158,7 @@ namespace SteamDesktopAuth
                                 if (CC.account.AcceptConfirmation(CC.conf))
                                 {
                                     confirmListBox.Items.Remove(selected);
-                                    completedTrades.Add(CC.conf.ConfirmationID);
+                                    completedTrades.Add(CC.conf.ID);
                                 }
 
                                 break;
@@ -168,7 +168,7 @@ namespace SteamDesktopAuth
                                 if (CC.account.DenyConfirmation(CC.conf))
                                 {
                                     confirmListBox.Items.Remove(selected);
-                                    completedTrades.Add(CC.conf.ConfirmationID);
+                                    completedTrades.Add(CC.conf.ID);
                                 }
 
                                 break;

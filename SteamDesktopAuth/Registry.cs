@@ -56,38 +56,6 @@ namespace SteamDesktopAuth
                     key.DeleteValue(appName, false);
                 }
             }
-
-
-            /// <summary>
-            /// Check if we're an elevated process
-            /// </summary>
-            /// <returns>True if we're adminn</returns>
-            public static bool IsUserAdministrator()
-            {
-                try
-                {
-                    WindowsIdentity user = WindowsIdentity.GetCurrent();
-                    WindowsPrincipal principal = new WindowsPrincipal(user);
-                    return principal.IsInRole(WindowsBuiltInRole.Administrator);
-                }
-                catch
-                {
-                    return false;
-                }
-            }
-
-
-            /// <summary>
-            /// Restarts the application as Admin
-            /// </summary>
-            public static void RestartAsAdmin()
-            {
-                var exeName = Process.GetCurrentProcess().MainModule.FileName;
-                ProcessStartInfo startInfo = new ProcessStartInfo(Process.GetCurrentProcess().MainModule.FileName);
-                startInfo.Verb = "runas";
-                Process.Start(startInfo);
-                Environment.Exit(1);
-            }
         }
     }
 }

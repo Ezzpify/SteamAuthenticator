@@ -56,6 +56,8 @@
             this.notifyMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.menuExit = new System.Windows.Forms.ToolStripMenuItem();
             this.updateChecker = new System.ComponentModel.BackgroundWorker();
+            this.notloadedBtn = new System.Windows.Forms.Button();
+            this.removePassword = new System.Windows.Forms.ToolStripMenuItem();
             ((System.ComponentModel.ISupportInitialize)(this.topBorder)).BeginInit();
             this.headerPanel.SuspendLayout();
             this.controlPanel.SuspendLayout();
@@ -102,6 +104,7 @@
             // 
             // controlPanel
             // 
+            this.controlPanel.Controls.Add(this.notloadedBtn);
             this.controlPanel.Controls.Add(this.settingsBtn);
             this.controlPanel.Controls.Add(this.miniButton);
             this.controlPanel.Controls.Add(this.exitButton);
@@ -243,7 +246,7 @@
             this.loginAuthCodeText.ReadOnly = true;
             this.loginAuthCodeText.Size = new System.Drawing.Size(210, 28);
             this.loginAuthCodeText.TabIndex = 7;
-            this.loginAuthCodeText.Text = "C52GY";
+            this.loginAuthCodeText.Text = "...";
             this.loginAuthCodeText.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             this.loginAuthCodeText.Visible = false;
             // 
@@ -284,16 +287,17 @@
             // 
             this.accountMenu.BackColor = System.Drawing.Color.White;
             this.accountMenu.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.unlinkAuthenticator});
+            this.unlinkAuthenticator,
+            this.removePassword});
             this.accountMenu.Name = "accountMenu";
             this.accountMenu.ShowImageMargin = false;
-            this.accountMenu.Size = new System.Drawing.Size(152, 26);
+            this.accountMenu.Size = new System.Drawing.Size(161, 48);
             this.accountMenu.Opening += new System.ComponentModel.CancelEventHandler(this.accountMenu_Opening);
             // 
             // unlinkAuthenticator
             // 
             this.unlinkAuthenticator.Name = "unlinkAuthenticator";
-            this.unlinkAuthenticator.Size = new System.Drawing.Size(151, 22);
+            this.unlinkAuthenticator.Size = new System.Drawing.Size(160, 22);
             this.unlinkAuthenticator.Text = "UNLINK ACCOUNT";
             this.unlinkAuthenticator.Click += new System.EventHandler(this.unlinkAuthenticator_Click);
             // 
@@ -358,6 +362,34 @@
             this.updateChecker.DoWork += new System.ComponentModel.DoWorkEventHandler(this.updateChecker_DoWork);
             this.updateChecker.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.updateChecker_RunWorkerCompleted);
             // 
+            // notloadedBtn
+            // 
+            this.notloadedBtn.AutoSize = true;
+            this.notloadedBtn.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.notloadedBtn.Dock = System.Windows.Forms.DockStyle.Left;
+            this.notloadedBtn.FlatAppearance.BorderSize = 0;
+            this.notloadedBtn.FlatAppearance.MouseDownBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(250)))), ((int)(((byte)(250)))), ((int)(((byte)(250)))));
+            this.notloadedBtn.FlatAppearance.MouseOverBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(250)))), ((int)(((byte)(250)))), ((int)(((byte)(250)))));
+            this.notloadedBtn.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.notloadedBtn.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.notloadedBtn.ForeColor = System.Drawing.Color.Gray;
+            this.notloadedBtn.Location = new System.Drawing.Point(65, 0);
+            this.notloadedBtn.Name = "notloadedBtn";
+            this.notloadedBtn.Size = new System.Drawing.Size(133, 25);
+            this.notloadedBtn.TabIndex = 3;
+            this.notloadedBtn.Text = "n accounts not loaded";
+            this.notloadedBtn.UseVisualStyleBackColor = true;
+            this.notloadedBtn.Visible = false;
+            this.notloadedBtn.Click += new System.EventHandler(this.notloadedBtn_Click);
+            // 
+            // removePassword
+            // 
+            this.removePassword.Name = "removePassword";
+            this.removePassword.Size = new System.Drawing.Size(160, 22);
+            this.removePassword.Text = "REMOVE PASSWORD";
+            this.removePassword.Visible = false;
+            this.removePassword.Click += new System.EventHandler(this.removePassword_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 17F);
@@ -381,6 +413,7 @@
             this.headerPanel.ResumeLayout(false);
             this.headerPanel.PerformLayout();
             this.controlPanel.ResumeLayout(false);
+            this.controlPanel.PerformLayout();
             this.contentPanel.ResumeLayout(false);
             this.contentPanel.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.loadingPicture)).EndInit();
@@ -419,6 +452,8 @@
         private System.ComponentModel.BackgroundWorker updateChecker;
         private System.Windows.Forms.Label versionLabel;
         private System.Windows.Forms.Button settingsBtn;
+        private System.Windows.Forms.Button notloadedBtn;
+        private System.Windows.Forms.ToolStripMenuItem removePassword;
     }
 }
 

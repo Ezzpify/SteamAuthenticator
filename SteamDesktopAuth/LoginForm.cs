@@ -64,12 +64,13 @@ namespace SteamDesktopAuth
         /// <returns>returns formatted number if valid, empty string if invalid</returns>
         private string FilterPhoneNumber(string input)
         {
-            if (input.Length > 0)
-            {
-                return Regex.Replace(input, "[^0-9a-zA-Z+]", "");
-            }
+            return input.Replace("-", "").Replace("(", "").Replace(")", "");
+            //if (input.Length > 0)
+            //{
+            //    return Regex.Replace(input, "[^0-9a-zA-Z+]", "");
+            //}
 
-            return string.Empty;
+            //return string.Empty;
         }
 
 

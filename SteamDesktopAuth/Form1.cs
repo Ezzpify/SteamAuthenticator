@@ -24,16 +24,18 @@ namespace SteamDesktopAuth
         private GitHub gitHub;
         private ConfirmForm confirmForm;
         private SettingsForm settingsForm;
+        private NotloadedForm notloadedForm;
         private SteamGuardAccount accountCurrent;
+        private SoundPlayer notifyPlayer;
         private List<SteamGuardAccount> accountList;
         private List<Config.ConfirmationClass> confirmationList;
         private List<PopupForm> popupForms;
 
         private long steamTime;
         private long currentSteamChunk;
-
-        private bool minimizedNotificationShown;
+        
         private bool applicationUpdateAvailable;
+        private bool applicationShownUnloadedAccounts;
 
 
         /// <summary>
@@ -59,19 +61,22 @@ namespace SteamDesktopAuth
         /// </summary>
         private void Form1_Load(object sender, EventArgs e)
         {
+            /*Instance classes*/
             gitHub              = new GitHub();
             accountList         = new List<SteamGuardAccount>();
             popupForms          = new List<PopupForm>();
             confirmationList    = new List<Config.ConfirmationClass>();
             confirmForm         = new ConfirmForm();
+            settingsForm        = new SettingsForm();
+            notifyPlayer        = new SoundPlayer();
             versionLabel.Text   = "v" + Application.ProductVersion;
             
             /*Check for settings*/
-            settingsForm = new SettingsForm();
-            settingsForm.cbAutostart.Checked    = CRegistry.StartUp.IsRegistered();
-            settingsForm.cbUpdates.Checked      = Properties.Settings.Default.bCheckForUpdates;
-            settingsForm.cbPassword.Checked     = Properties.Settings.Default.bAskForPassword;
-            settingsForm.cbStatistics.Checked   = Properties.Settings.Default.bSendStatistics;
+            settingsForm.cbAutostart.Checked      = CRegistry.StartUp.IsRegistered();
+            settingsForm.cbUpdates.Checked        = Properties.Settings.Default.bCheckForUpdates;
+            settingsForm.cbPassword.Checked       = Properties.Settings.Default.bAskForPassword;
+            settingsForm.cbStatistics.Checked     = Properties.Settings.Default.bSendStatistics;
+            settingsForm.cbStartMinimized.Checked = Properties.Settings.Default.bStartMinimized;
 
             /*Update statistics if enabled*/
             if (settingsForm.cbStatistics.Checked)
@@ -95,18 +100,16 @@ namespace SteamDesktopAuth
             {
                 InputForm passwordForm = new InputForm("Enter password. If you are a new user, enter a new password (6-25 chars). It can not be recovered.", true);
                 passwordForm.ShowDialog();
-
-                if (passwordForm.inputCancelled)
-                {
-                    Environment.Exit(1);
-                }
-                else if (!passwordForm.inputNoPassword)
+                
+                /*If user provided us with a password*/
+                if (!passwordForm.inputNoPassword)
                 {
                     string password = passwordForm.inputText.Text;
                     if (password.Length >= 6 && password.Length <= 25)
                     {
+                        /*Set secret and salt for encryption*/
                         Crypto.crySecret = password;
-                        Crypto.crySalt = Encoding.ASCII.GetBytes("RandomNumberFour"); //Guaranteed to be random - temp
+                        Crypto.crySalt = Encoding.ASCII.GetBytes("RandomNumberFour"); //https://xkcd.com/221/
                     }
                     else
                     {
@@ -115,22 +118,33 @@ namespace SteamDesktopAuth
                     }
                 }
             }
-
+            
+            /*Check if application is up-to-date if setting enabled*/
             if (settingsForm.cbUpdates.Checked)
             {
-                /*Check if application is up-to-date*/
                 updateChecker.RunWorkerAsync();
                 IsLoading(true);
             }
 
-            /*Create folder that we'll store all save files in*/
+            /*Minimize the app if enabled*/
+            if (settingsForm.cbStartMinimized.Checked)
+            {
+                notifyIcon.ShowBalloonTip(2000, "Steam Authenticator", "I'm down here!", ToolTipIcon.Info);
+                WindowState = FormWindowState.Minimized;
+                ShowInTaskbar = false;
+                Hide();
+            }
+
+            /*Do the rest*/
             Directory.CreateDirectory(Path.Combine(Application.StartupPath, "SGAFiles"));
+            notifyPlayer.Stream = Properties.Resources.notifysound;
             loadAccounts();
         }
 
 
         /// <summary>
-        /// Notifyicon for main foorm
+        /// Notifyicon for main form
+        /// This will show the main form
         /// </summary>
         private void notifyIcon_MouseClick(object sender, MouseEventArgs e)
         {
@@ -138,13 +152,9 @@ namespace SteamDesktopAuth
             {
                 if (WindowState == FormWindowState.Minimized)
                 {
-                    ShowInTaskbar = true;
                     WindowState = FormWindowState.Normal;
-                }
-                else if (WindowState == FormWindowState.Normal)
-                {
-                    ShowInTaskbar = false;
-                    WindowState = FormWindowState.Minimized;
+                    ShowInTaskbar = true;
+                    Show();
                 }
             }
         }
@@ -167,7 +177,9 @@ namespace SteamDesktopAuth
         private void settingsBtn_Click(object sender, EventArgs e)
         {
             if (settingsForm != null)
+            {
                 settingsForm.ShowDialog();
+            }
         }
 
 
@@ -187,13 +199,24 @@ namespace SteamDesktopAuth
         /// <param name="e"></param>
         private void miniButton_Click(object sender, EventArgs e)
         {
+            /*Hide window*/
             WindowState = FormWindowState.Minimized;
             ShowInTaskbar = false;
+            Hide();
 
-            if (!minimizedNotificationShown)
+            /*Hide other forms if they are visible*/
+            if (confirmForm != null && confirmForm.Visible)
+                confirmForm.Hide();
+
+            if (notloadedForm != null && notloadedForm.Visible)
+                notloadedForm.Hide();
+
+            /*Show notifyicon notification if we've never done that before*/
+            if (!Properties.Settings.Default.bMinimizedNotificationShown)
             {
-                minimizedNotificationShown = true;
                 notifyIcon.ShowBalloonTip(600, "Steam Authenticator", "I'm still running down here!", ToolTipIcon.Info);
+                Properties.Settings.Default.bMinimizedNotificationShown = true;
+                Properties.Settings.Default.Save();
             }
         }
 
@@ -330,25 +353,60 @@ namespace SteamDesktopAuth
             accountListBox.Items.Clear();
 
             /*Get accounts from save list and load them up*/
-            accountList = FileHandler.GetAllAccounts();
-            if(accountList.Count > 0)
+            var unloadedList = new List<string>();
+            var accList = FileHandler.GetAllAccounts();
+            if (accList.Count > 0)
             {
-                foreach(SteamGuardAccount account in accountList)
+                lock (accList)
                 {
-                    accountListBox.Items.Add(account.AccountName);
-                    if (!notifyMenu.Items.ContainsKey(account.AccountName))
+                    foreach (var accHolder in accList)
                     {
-                        /*Add account to notifyMenu (contextMenuStrip attatched to notifyIcon) so user can access things quickly*/
-                        ToolStripMenuItem tsm = new ToolStripMenuItem();
-                        tsm.Text = account.AccountName;
-                        tsm.DropDownItems.Add("Copy Steam Guard code", null, new EventHandler(menuGetCode_Click));
-                        tsm.DropDownItems.Add("Accept all trades", null, new EventHandler(menuAcceptTrades_Click));
-                        notifyMenu.Items.Add(tsm);
+                        if (!accHolder.loaded)
+                        {
+                            /*This account wasn't loaded successfully*/
+                            /*We'll add it in a seperate list to display*/
+                            unloadedList.Add(accHolder.filename);
+                            continue;
+                        }
+                        else
+                        {
+                            /*This was loaded*/
+                            accountList.Add(accHolder.account);
+                        }
+
+                        /*Add the account*/
+                        accountListBox.Items.Add(accHolder.account.AccountName);
+                        if (!notifyMenu.Items.ContainsKey(accHolder.account.AccountName))
+                        {
+                            /*Add account to notifyMenu (contextMenuStrip attatched to notifyIcon) so user can access things quickly*/
+                            ToolStripMenuItem tsm = new ToolStripMenuItem();
+                            tsm.Text = accHolder.account.AccountName;
+                            tsm.DropDownItems.Add("Copy Steam Guard code", null, new EventHandler(menuGetCode_Click));
+                            tsm.DropDownItems.Add("Accept all trades", null, new EventHandler(menuAcceptTrades_Click));
+                            notifyMenu.Items.Add(tsm);
+                        }
                     }
                 }
-
                 accountListBox.SelectedIndex = 0;
             }
+
+            /*If we haven't already displayed the list of unloaded accounts, do it here*/
+            if (!applicationShownUnloadedAccounts && unloadedList.Count > 0)
+            {
+                notloadedForm = new NotloadedForm(unloadedList);
+                notloadedBtn.Text = string.Format("{0} accounts not loaded", unloadedList.Count);
+                notloadedBtn.Visible = true;
+                applicationShownUnloadedAccounts = true;
+            }
+        }
+
+
+        /// <summary>
+        /// Button that shows the list of unloaded accounts
+        /// </summary>
+        private void notloadedBtn_Click(object sender, EventArgs e)
+        {
+            notloadedForm.Show();
         }
 
 
@@ -484,7 +542,7 @@ namespace SteamDesktopAuth
             Point cPoint = new Point(workingArea.Right - 290, workingArea.Bottom - 110 - (popupForms.Count * 110));
 
             /*Show form and add to list*/
-            PopupForm popupForm = new PopupForm(CC.conf.ConfirmationDescription, CC.conf.ConfirmationID, CC.account.AccountName, cPoint);
+            PopupForm popupForm = new PopupForm(CC.conf.Description, CC.conf.ID, CC.account.AccountName, cPoint);
             popupForms.Add(popupForm);
             popupForm.Show();
         }
@@ -503,7 +561,7 @@ namespace SteamDesktopAuth
                 if (pf.wasAccepted)
                 {
                     /*Get the trade from list of trades that matches trade id and accept offer*/
-                    var trade = confirmationList.First(o => o.conf.ConfirmationID == pf.tradeId);
+                    var trade = confirmationList.First(o => o.conf.ID == pf.tradeId);
                     if (trade.account.AcceptConfirmation(trade.conf))
                     {
                         Console.Beep(800, 100);
@@ -513,7 +571,7 @@ namespace SteamDesktopAuth
                 else if (pf.wasCancelled)
                 {
                     /*... decline offer*/
-                    var trade = confirmationList.First(o => o.conf.ConfirmationID == pf.tradeId);
+                    var trade = confirmationList.First(o => o.conf.ID == pf.tradeId);
                     if (trade.account.DenyConfirmation(trade.conf))
                     {
                         Console.Beep(800, 100);
@@ -555,6 +613,8 @@ namespace SteamDesktopAuth
         {
             if (accountListBox.SelectedItem == null)
                 e.Cancel = true;
+
+            removePassword.Visible = FileHandler.IsSGAFileEncrypted(accountCurrent);
         }
 
 
@@ -606,7 +666,7 @@ namespace SteamDesktopAuth
                                 {
                                     account = accountList[i],
                                     conf = conf,
-                                    tradeid = conf.ConfirmationID,
+                                    tradeid = conf.ID,
                                     displayed = false
                                 };
 
@@ -630,20 +690,17 @@ namespace SteamDesktopAuth
                     foreach (Config.ConfirmationClass CC in confirmationList)
                     {
                         /*Have to make an additional check here because user might accept from ConfirmForm*/
-                        if (confirmForm.completedTrades.Contains(CC.conf.ConfirmationID))
+                        if (confirmForm.completedTrades.Contains(CC.conf.ID))
                             CC.done = true;
 
                         if (!CC.displayed)
                         {
                             CC.displayed = true;
+
+                            /*Invoke because yolo*/
                             Invoke(new Action(() =>
                             {
-                                /*Invoke because yolo*/
                                 DoPopup(CC);
-
-                                /*Play notification sound from resources*/
-                                SoundPlayer notifyPlayer = new SoundPlayer();
-                                notifyPlayer.Stream = Properties.Resources.notifysound;
                                 notifyPlayer.Play();
 
                             }));
@@ -700,6 +757,40 @@ namespace SteamDesktopAuth
                     {
                         MessageBox.Show("Confirmation failed", "Boop beep.");
                     }
+                }
+            }
+        }
+
+
+        /// <summary>
+        /// Remove password from an account if there's one set
+        /// </summary>
+        private void removePassword_Click(object sender, EventArgs e)
+        {
+            if (accountCurrent != null)
+            {
+                /*Get the account password*/
+                InputForm confirmForm = new InputForm("Confirm your password. You can not re-encrypt this file once this process is done.", true);
+                confirmForm.nopwButton.Visible = false;
+                confirmForm.ShowDialog();
+
+                /*Check if passwords matches*/
+                string password = confirmForm.inputText.Text;
+                if (password == Crypto.crySecret && password.Length > 6)
+                {
+                    if (FileHandler.DecryptSGAFile(accountCurrent))
+                    {
+                        MessageBox.Show("Save file decrypted", "Success");
+                        loadAccounts();
+                    }
+                    else
+                    {
+                        MessageBox.Show("Unable to decrypt file", "Error");
+                    }
+                }
+                else
+                {
+                    MessageBox.Show("Password does not match the password you entered at start", "Error");
                 }
             }
         }

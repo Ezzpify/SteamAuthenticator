@@ -5,6 +5,13 @@ namespace SteamDesktopAuth
 {
     public class Config
     {
+        public class LoadSteamGuardAccount
+        {
+            public bool loaded { get; set; }
+            public string filename { get; set; }
+            public SteamGuardAccount account { get; set; }
+        }
+
         public class ConfirmationClass
         {
             public SteamGuardAccount account { get; set; }

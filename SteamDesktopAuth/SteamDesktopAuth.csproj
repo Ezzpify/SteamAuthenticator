@@ -36,9 +36,9 @@
     <ApplicationIcon>Icon2.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Newtonsoft.Json, Version=4.5.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>.\Newtonsoft.Json.dll</HintPath>
+    <Reference Include="Newtonsoft.Json, Version=9.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.9.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="SteamAuth">
       <HintPath>.\SteamAuth.dll</HintPath>
@@ -85,6 +85,12 @@
     <Compile Include="LoginForm.Designer.cs">
       <DependentUpon>LoginForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="NotloadedForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="NotloadedForm.Designer.cs">
+      <DependentUpon>NotloadedForm.cs</DependentUpon>
+    </Compile>
     <Compile Include="PopupForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -112,6 +118,9 @@
     <EmbeddedResource Include="LoginForm.resx">
       <DependentUpon>LoginForm.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="NotloadedForm.resx">
+      <DependentUpon>NotloadedForm.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="PopupForm.resx">
       <DependentUpon>PopupForm.cs</DependentUpon>
     </EmbeddedResource>
@@ -128,6 +137,7 @@
     <EmbeddedResource Include="SettingsForm.resx">
       <DependentUpon>SettingsForm.cs</DependentUpon>
     </EmbeddedResource>
+    <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
@@ -142,7 +152,6 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Icon.ico" />
     <Content Include="Icon2.ico" />
     <None Include="Resources\notifysound.wav" />
   </ItemGroup>

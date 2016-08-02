@@ -142,6 +142,6 @@
         private System.Windows.Forms.Label cancelButton;
         private System.Windows.Forms.Label questionLabel;
         public System.Windows.Forms.TextBox inputText;
-        private System.Windows.Forms.Label nopwButton;
+        public System.Windows.Forms.Label nopwButton;
     }
 }

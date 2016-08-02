@@ -58,5 +58,29 @@ namespace SteamDesktopAuth.Properties {
                 this["bSendStatistics"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool bMinimizedNotificationShown {
+            get {
+                return ((bool)(this["bMinimizedNotificationShown"]));
+            }
+            set {
+                this["bMinimizedNotificationShown"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool bStartMinimized {
+            get {
+                return ((bool)(this["bStartMinimized"]));
+            }
+            set {
+                this["bStartMinimized"] = value;
+            }
+        }
     }
 }
