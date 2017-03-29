@@ -5,6 +5,10 @@
   <h2 align="center"><a href="https://github.com/Ezzpify/SteamAuthenticator/releases/latest">DOWNLOAD</a></h2>
 </p>
 
+[![License](https://img.shields.io/github/license/Ezzpify/SteamAuthenticator.svg?label=License&maxAge=86400)](./LICENSE)
+[![GitHub Release](https://img.shields.io/github/release/Ezzpify/SteamAuthenticator.svg?label=Latest&maxAge=60)](https://github.com/Ezzpify/HourBoostr/releases/latest)
+[![Github Downloads](https://img.shields.io/github/downloads/Ezzpify/SteamAuthenticator/latest/total.svg?label=Downloads%20for%20latest&maxAge=60)](https://github.com/Ezzpify/SteamAuthenticator/releases/latest)
+
 # Information
 
 Recently Steam introduced an update to the trading scene which meant that you are required to have a smartphone in order to be able to trade items instantly using the Steam application, and if you do not have a smartphone connected then you will need to wait three days for the items to reach the one you're tradign with.
