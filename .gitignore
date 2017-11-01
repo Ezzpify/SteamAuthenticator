@@ -1,6 +1,13 @@
 # Debug and Release folder
 bin/
 obj/
+.vs/
+
+# User-specific files
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
 
 # Windows image file caches
 Thumbs.db
